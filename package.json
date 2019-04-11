@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "extract-loader": "^3.1.0",
+    "file-loader": "^3.0.1"
+  }
+}
