@@ -11,7 +11,21 @@ function handleHTML(node, doc) {
   node.setAttribute("amp", "");
 }
 
+function handleStyleTag(doc) {
+  styleTags = doc.querySelectorAll("style");
+
+  if (styleTags.length == 1) {
+    styleTags[0].setAttribute("amp-custom", "");
+  } else {
+    console.log("more than 1");
+
+    styleString = styleTags.map(x => x.textContent).join("\n");
+  }
+}
+
 function handleHead(node, doc) {
+  handleStyleTag(doc);
+
   var meta = doc.createElement("meta");
   meta.setAttribute("charset", "utf-8");
   node.appendChild(meta);
@@ -51,8 +65,6 @@ function handleBody(node, doc) {}
 module.exports = function(source) {
   const win = new JSDOM(source).window;
 
-  // console.log(JSON.stringify(source));
-
   var head = win.document.head;
   var body = win.document.body;
 
@@ -60,7 +72,7 @@ module.exports = function(source) {
   handleHead(head, win.document);
 
   source = "<!doctype html> " + win.document.documentElement.outerHTML;
-  console.log(source);
+  //console.log(source);
 
   return "module.exports = " + JSON.stringify(source);
 };
