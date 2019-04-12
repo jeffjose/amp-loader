@@ -11,20 +11,32 @@ function handleHTML(node, doc) {
   node.setAttribute("amp", "");
 }
 
-function handleStyleTag(doc) {
-  styleTags = doc.querySelectorAll("style");
+function handleStyleTag(node, doc) {
+  styleTags = node.querySelectorAll("style");
 
   if (styleTags.length == 1) {
     styleTags[0].setAttribute("amp-custom", "");
-  } else {
+  } else if (styleTags.length > 1) {
     console.log("more than 1");
+    console.log(styleTags);
 
-    styleString = styleTags.map(x => x.textContent).join("\n");
+    var styleString = "";
+    for (var i = 0; i < styleTags.length; i++) {
+      tag = styleTags[i];
+      styleString = `${styleString}\n${tag.textContent}`;
+
+      tag.parentNode.removeChild(tag);
+    }
+
+    var style = doc.createElement("style");
+    style.setAttribute("amp-custom", "");
+    style.textContent = styleString;
+    node.appendChild(style);
   }
 }
 
 function handleHead(node, doc) {
-  handleStyleTag(doc);
+  handleStyleTag(node, doc);
 
   var meta = doc.createElement("meta");
   meta.setAttribute("charset", "utf-8");
