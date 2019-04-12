@@ -10,6 +10,7 @@ const headString = `
 function handleHTML(node, doc) {
   node.setAttribute("amp", "");
 }
+
 function handleHead(node, doc) {
   var meta = doc.createElement("meta");
   meta.setAttribute("charset", "utf-8");
@@ -20,13 +21,29 @@ function handleHead(node, doc) {
   meta.setAttribute("content", "width=device-width,minimum-scale=1");
   node.appendChild(meta);
 
-  var style = doc.createElement("style", "amp-boilerplate");
-  style.textContent = `body{-webkit-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-moz-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-ms-animation:-amp-start 8s steps(1,end) 0s 1 normal both;animation:-amp-start 8s steps(1,end) 0s 1 normal both}@-webkit-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-moz-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-ms-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-o-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}</style><noscript><style amp-boilerplate>body{-webkit-animation:none;-moz-animation:none;-ms-animation:none;animation:none}`;
+  var style = doc.createElement("style");
+  style.setAttribute("amp-boilerplate", "");
+  style.textContent = `body{-webkit-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-moz-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-ms-animation:-amp-start 8s steps(1,end) 0s 1 normal both;animation:-amp-start 8s steps(1,end) 0s 1 normal both}@-webkit-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-moz-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-ms-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-o-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}`;
   node.appendChild(style);
 
-  var script = doc.createElement("script", "async");
+  var noscript = doc.createElement("noscript");
+
+  var style = doc.createElement("style");
+  style.setAttribute("amp-boilerplate", "");
+  style.textContent = `body{-webkit-animation:none;-moz-animation:none;-ms-animation:none;animation:none}`;
+  noscript.appendChild(style);
+
+  node.appendChild(noscript);
+
+  var script = doc.createElement("script");
+  script.setAttribute("async", "");
   script.setAttribute("src", "https://cdn.ampproject.org/v0.js");
   node.appendChild(script);
+
+  var link = doc.createElement("link");
+  link.setAttribute("rel", "canonical");
+  link.setAttribute("href", "foo.html");
+  node.appendChild(link);
 }
 
 function handleBody(node, doc) {}
@@ -42,7 +59,8 @@ module.exports = function(source) {
   handleHTML(win.document.documentElement, win.document);
   handleHead(head, win.document);
 
-  console.log(win.document.documentElement.outerHTML);
+  source = "<!doctype html> " + win.document.documentElement.outerHTML;
+  console.log(source);
 
   return "module.exports = " + JSON.stringify(source);
 };
